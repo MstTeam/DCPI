@@ -5,7 +5,7 @@ public class Parser {
 	private String JsonString = null;
 	private JsonObject JsonObject = null;
 	
-	private int current = 0;
+	private int currentPos = 0;
 	
 	public Parser() {
 		
@@ -15,13 +15,13 @@ public class Parser {
 		
 		this.JsonString = JsonString;
 		
-		for (int current = 0; current < JsonString.length(); current++) {
+		for (currentPos = 0; currentPos < JsonString.length(); currentPos++) {
 	          
-			String character = String.valueOf(JsonString.charAt(current));
+			String character = String.valueOf(JsonString.charAt(currentPos));
 			
 			if(character.equals("{")) {
 				
-				JsonObject = analyseObject(current);
+				JsonObject = analyseObject(currentPos);
 				
 			}
 			
@@ -53,7 +53,7 @@ public class Parser {
 			
 			if(character.equals("\"")) {
 				
-				if(!getLast(current).equals("\\")) {
+				if(!getLast(i).equals("\\")) {
 					
 					if(structure == 0) {
 						
@@ -71,7 +71,7 @@ public class Parser {
 						
 						object.addValue(name, tObject);
 						
-						i = current;
+						i = currentPos;
 						
 						name = "";
 						
@@ -93,7 +93,7 @@ public class Parser {
 			
 			if(character.equals("}")) {
 				
-				current = i;
+				currentPos = i;
 				
 				return object;
 				
@@ -136,7 +136,7 @@ public class Parser {
 						
 						if(structure == 1) {
 							
-							current = i;
+							currentPos = i;
 							
 							return tString;
 							
@@ -158,29 +158,29 @@ public class Parser {
 				
 				if(character.equals("{")) {
 					
-					current = i;
+					currentPos = i;
 					
-					return analyseObject(current);
+					return analyseObject(currentPos);
 					
 				}
 				
 				if(character.equals("[")) {
 					
-					current = i;
+					currentPos = i;
 					
-					return analyseArray(current);
+					return analyseArray(currentPos);
 					
 				}
 				
 				// Other
 				
-				if(character.equals(",") | character.equals("}")) {
+				if(character.equals(",") | character.equals("}") | character.equals("]")) {
 					
 					String value = JsonString.substring(start, i).replace(" ", "");
 					
 					if(value.equals("false")) {
 						
-						current = i - 1;
+						currentPos = i - 1;
 						
 						return false;
 						
@@ -188,7 +188,7 @@ public class Parser {
 					
 					if(value.equals("true")) {
 						
-						current = i - 1;
+						currentPos = i - 1;
 						
 						return true;
 						
@@ -196,7 +196,7 @@ public class Parser {
 					
 					if(value.equals("null")) {
 						
-						current = i - 1;
+						currentPos = i - 1;
 						
 						return null;
 						
@@ -204,13 +204,13 @@ public class Parser {
 					
 					if(isNumber(value)) {
 						
-						current = i - 1;
+						currentPos = i - 1;
 						
 						return Integer.parseInt(value);
 						
 					}
 					
-					current = i - 1;
+					currentPos = i - 1;
 					
 					return null;
 					
@@ -256,7 +256,7 @@ public class Parser {
 					
 				}
 				
-				i = current;
+				i = currentPos;
 				
 				continue;
 				
@@ -266,13 +266,15 @@ public class Parser {
 				
 				array.addValue(analyseValue(i + 1, true));
 				
-				i = current;
+				i = currentPos;
 				
 				continue;
 				
 			}
 			
 			if(character.equals("]")) {
+				
+				currentPos = i;
 				
 				return array;
 				

@@ -5,11 +5,17 @@ import java.util.Set;
 
 public class JsonObject {
 
-	private HashMap<String, Object> data;
+	public HashMap<String, Object> data;
 	
 	public JsonObject() {
 		
-		data = new HashMap<>();
+		data = new HashMap<String, Object>();
+		
+	}
+	
+	public HashMap<String, Object> hash() {
+		
+		return this.data;
 		
 	}
 	
