@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class JsonObject {
 
-	public HashMap<String, Object> data;
+	private HashMap<String, Object> data;
 	
 	public JsonObject() {
 		
@@ -54,6 +54,18 @@ public class JsonObject {
 	public Set<String> getKeys() {
 		
 		return data.keySet();
+		
+	}
+	
+	public boolean isEmpty() {
+		
+		if(data.isEmpty()) {
+			
+			return true;
+			
+		}
+		
+		return false;
 		
 	}
 	
@@ -131,14 +143,28 @@ public class JsonObject {
 
 	public JsonArray getArray(String Key) {
 	
-	if(data.containsKey(Key)) {
+		if(data.containsKey(Key)) {
 		
-		return (JsonArray) data.get(Key);
+			return (JsonArray) data.get(Key);
 		
+		}
+	
+		return null;
+	
 	}
 	
-	return null;
-	
-}
+	public void addaptive(JsonObject JsonObject) {
+		
+		if(!JsonObject.isEmpty()) {
+			
+			JsonObject.getKeys().forEach(key -> {
+				
+				this.data.put(key, JsonObject.get(key));
+				
+			});
+			
+		}
+		
+	}
 	
 }

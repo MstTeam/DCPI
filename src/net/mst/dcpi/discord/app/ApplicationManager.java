@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class ApplicationManager {
 	
-	private static Map<String, ApplicationInstance> applications = new HashMap<>();
+	private static Map<String, Application> applications = new HashMap<>();
 	
-	public static void registerApplication(String Name, ApplicationInstance ApplicationInstance) {
+	public static void registerApplication(String Name, Application Application) {
 		
 		if(applications.containsKey(Name)) {
 			
@@ -15,7 +15,7 @@ public class ApplicationManager {
 			
 		}
 		
-		applications.put(Name, ApplicationInstance);
+		applications.put(Name, Application);
 		
 		return;
 		

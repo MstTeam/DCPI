@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mst.dcpi.discord.app.enums.ApiVersion;
+import net.mst.gateway.enums.GatewayApiVersion;
 
 public class RequestManager {
 	
@@ -13,6 +14,6 @@ public class RequestManager {
 	protected HttpClient $getterClient = HttpClient.newHttpClient();
 	
 	public static ApiVersion restApiVersion = ApiVersion.VERSION_10;
-	public static String gatewayApiVersion = "v9";
+	public static GatewayApiVersion gatewayApiVersion = GatewayApiVersion.VERSION_9;
 
 }

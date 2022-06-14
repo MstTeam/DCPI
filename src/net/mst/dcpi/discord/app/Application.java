@@ -10,7 +10,7 @@ import net.mst.json.JsonObject;
 import net.mst.json.Parser;
 import net.mst.json.Parser;
 
-public class Application extends ApplicationInstance {
+public class Application extends AccountInstance {
 	
 	public String getAuthorizationUrl(AuthorizationFlow AuthorizationFlow) {
 		
@@ -36,8 +36,6 @@ public class Application extends ApplicationInstance {
 			
 			JsonObject jo = new Parser().parse(response.body());
 			
-			System.out.println(jo.data);
-			
 			System.out.println("2Time gone: " + (System.nanoTime() - l2));
 			
 		} catch (IOException | InterruptedException e) {
@@ -45,6 +43,8 @@ public class Application extends ApplicationInstance {
 			e.printStackTrace();
 			
 		}
+		
+		startGatewayConnection();
 		
 	}
 
