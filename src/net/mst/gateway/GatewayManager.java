@@ -56,7 +56,7 @@ public class GatewayManager implements Listener {
     	
     	this.websocket = webSocket;
     	
-    	websocket.request(10);
+    	websocket.request(1);
     	System.out.println("[Text] " + data.toString());
     	tempString = tempString + data.toString();
     	
@@ -75,10 +75,8 @@ public class GatewayManager implements Listener {
     	}
     	
     	if(jo.get("op").toString().equals("1")) {
-    		
-    		String toSent = "{\"op\":1,\"d\":" + sequenceNumber + "}";
 			
-    		sendCommand(toSent);
+    		sendCommand("{\"op\":1,\"d\":" + sequenceNumber + "}");
     		
     	}
     	
@@ -87,6 +85,9 @@ public class GatewayManager implements Listener {
 			this.heartbeat_interval = jo.getObject("d").getInteger("heartbeat_interval");
 			
 			hb = new Heartbeat(this);
+			
+			// Identify Payload
+			sendCommand(new Parser().parse(this.gw.AccountInstance.getShard().receiveObject(this.gw.AccountInstance.getToken())));
 			
 		}
     	
@@ -103,6 +104,8 @@ public class GatewayManager implements Listener {
     		}
     		
     	}
+    	
+    	tempString = "";
     	
     	return null;
     	
