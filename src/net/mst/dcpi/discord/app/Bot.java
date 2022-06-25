@@ -1,8 +1,8 @@
 package net.mst.dcpi.discord.app;
 
 import net.mst.dcpi.discord.app.enums.ApiVersion;
-import net.mst.dcpi.request.RequestManager;
 import net.mst.gateway.Shard;
+import net.mst.requests.RequestManager;
 
 public class Bot extends Application {
 	

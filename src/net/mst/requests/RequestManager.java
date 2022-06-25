@@ -1,5 +1,9 @@
 package net.mst.requests;
 
+import java.net.http.HttpClient;
+
+import net.mst.dcpi.discord.app.enums.ApiVersion;
+import net.mst.gateway.enums.GatewayApiVersion;
 import net.mst.utilities.timer.Task;
 import net.mst.utilities.timer.Timer;
 
@@ -15,6 +19,11 @@ public class RequestManager {
 	
 	private Requests requests = new Requests();
 	private Timer rateLimiter;
+	
+	protected HttpClient $getterClient = HttpClient.newHttpClient();
+	
+	public static ApiVersion restApiVersion = ApiVersion.VERSION_10;
+	public static GatewayApiVersion gatewayApiVersion = GatewayApiVersion.VERSION_9;
 	
 	public RequestManager() {
 		
@@ -88,9 +97,9 @@ public class RequestManager {
 		
 	}
 	
-	public RequestManager queueRequest(Request request) {
+	public RequestManager queueRequest(Request Request) {
 		
-		requests.addRequest(request);
+		requests.addRequest(Request);
 		
 		return this;
 		
@@ -98,7 +107,11 @@ public class RequestManager {
 	
 	public RequestManager instantRequest(Request Request) {
 		
-		executeRequest(Request);
+		if(!executeRequest(Request)) {
+			
+			requests.addRequest(Request);
+			
+		}
 		
 		return this;
 		

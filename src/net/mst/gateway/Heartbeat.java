@@ -29,8 +29,8 @@ public class Heartbeat {
 				
 				gw.ping_start = System.currentTimeMillis();
 				gw.awaiting_ack = true;
-	    		gw.sendCommand("{\"op\":1,\"d\":" + gw.sequenceNumber + "}");
-				
+	    		gw.sendCommand("{\"op\":1,\"d\":" + gw.sequenceNumber + "}", true);
+	    		
 				t.cancel();
 				
 				startHeartbeat();
@@ -50,7 +50,7 @@ public class Heartbeat {
 				
 				System.err.println("Heartbeating after " + gw.heartbeat_interval);
 				
-	    		gw.sendCommand("{\"op\":1,\"d\":" + gw.sequenceNumber + "}");
+	    		gw.sendCommand("{\"op\":1,\"d\":" + gw.sequenceNumber + "}", true);
 				
 				gw.ping_start = System.currentTimeMillis();
 				gw.awaiting_ack = true;

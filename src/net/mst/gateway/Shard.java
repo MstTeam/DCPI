@@ -76,7 +76,11 @@ public class Shard {
 		
 	}
 	
-	public JsonObject receiveObject(String Token) {
+	public JsonObject receivePayloadObject(String Token) {
+		
+		JsonObject payload = new JsonObject();
+		
+		payload.addValue("op", 2);
 		
 		JsonObject object = new JsonObject();
 		
@@ -93,7 +97,9 @@ public class Shard {
 		object.addValue("properties", properties);
 		object.addValue("intents", GatewayIntent.getIntentInteger(intents));
 		
-		return object;
+		payload.addValue("d", object);
+		
+		return payload;
 		
 	}
 

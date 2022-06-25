@@ -85,7 +85,7 @@ public class JsonObject {
 		
 		if(data.containsKey(Key)) {
 			
-			return (String) data.get(Key);
+			return String.valueOf(data.get(Key));
 			
 		}
 		
