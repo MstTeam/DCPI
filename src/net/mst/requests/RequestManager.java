@@ -3,7 +3,7 @@ package net.mst.requests;
 import java.net.http.HttpClient;
 
 import net.mst.dcpi.discord.app.enums.ApiVersion;
-import net.mst.gateway.enums.GatewayApiVersion;
+import net.mst.dcpi.discord.app.gateway.enums.GatewayApiVersion;
 import net.mst.utilities.timer.Task;
 import net.mst.utilities.timer.Timer;
 
@@ -20,7 +20,7 @@ public class RequestManager {
 	private Requests requests = new Requests();
 	private Timer rateLimiter;
 	
-	protected HttpClient $getterClient = HttpClient.newHttpClient();
+	protected HttpClient getterClient = HttpClient.newHttpClient();
 	
 	public static ApiVersion restApiVersion = ApiVersion.VERSION_10;
 	public static GatewayApiVersion gatewayApiVersion = GatewayApiVersion.VERSION_9;

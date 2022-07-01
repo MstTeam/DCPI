@@ -1,9 +1,9 @@
-package net.mst.gateway;
+package net.mst.dcpi.discord.app.gateway;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import net.mst.gateway.enums.Status;
+import net.mst.dcpi.discord.app.gateway.enums.Status;
 
 public class Heartbeat {
 	

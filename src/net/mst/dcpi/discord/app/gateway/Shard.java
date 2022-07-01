@@ -1,9 +1,9 @@
-package net.mst.gateway;
+package net.mst.dcpi.discord.app.gateway;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mst.gateway.enums.GatewayIntent;
+import net.mst.dcpi.discord.app.gateway.enums.GatewayIntent;
 import net.mst.json.JsonObject;
 
 public class Shard {
@@ -46,7 +46,11 @@ public class Shard {
 	
 	public Shard setSystem(String OperatingSystem) {
 		
-		this.os = OperatingSystem;
+		if(OperatingSystem != null) {
+			
+			this.os = OperatingSystem;
+			
+		}
 		
 		return this;
 		
@@ -54,7 +58,11 @@ public class Shard {
 	
 	public Shard setBrowser(String Browser) {
 		
-		this.browser = Browser;
+		if(Browser != null) {
+			
+			this.browser = Browser;
+			
+		}
 		
 		return this;
 		
@@ -62,7 +70,11 @@ public class Shard {
 	
 	public Shard setDevice(String Device) {
 		
-		this.device = Device;
+		if(Device != null) {
+			
+			this.device = Device;
+			
+		}
 		
 		return this;
 		
@@ -76,7 +88,7 @@ public class Shard {
 		
 	}
 	
-	public JsonObject receivePayloadObject(String Token) {
+	JsonObject receivePayloadObject(String Token) {
 		
 		JsonObject payload = new JsonObject();
 		

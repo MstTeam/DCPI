@@ -1,7 +1,7 @@
 package net.mst.dcpi.discord.app;
 
 import net.mst.dcpi.discord.app.enums.ApiVersion;
-import net.mst.gateway.Shard;
+import net.mst.dcpi.discord.app.gateway.Shard;
 import net.mst.requests.RequestManager;
 
 public class Bot extends Application {
@@ -65,6 +65,25 @@ public class Bot extends Application {
 		cache();
 		
 		ApplicationManager.registerApplication(Name, this);
+		
+	}
+	
+	private void createInstance(String Name, String Token, ApiVersion ApiVersion, Shard Shard) {
+		
+		this.token = Token;
+		
+		if(ApiVersion == null) {
+			
+			
+			
+		}
+		
+		if(Name != null) {
+			
+			this.name = Name;
+			ApplicationManager.registerApplication(Name, this);
+			
+		}
 		
 	}
 

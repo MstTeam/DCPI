@@ -1,18 +1,26 @@
 package net.mst.dcpi.discord.app;
 
-import net.mst.dcpi.Object;
-import net.mst.dcpi.discord.app.enums.ApiVersion;
-import net.mst.gateway.Gateway;
-import net.mst.gateway.Shard;
+import java.net.http.HttpClient;
 
-public class AccountInstance extends Object {
+import net.mst.dcpi.discord.app.enums.ApiVersion;
+import net.mst.dcpi.discord.app.gateway.Gateway;
+import net.mst.dcpi.discord.app.gateway.Shard;
+
+public class ClientInstance {
 	
-	protected String token = null;
-	protected String name = null;
-	protected ApiVersion customApiVersion = null;
-	protected Shard shard = null;
+	String token = null;
+	String name = null;
 	
-	protected Gateway gateway = null;
+	ApiVersion customApiVersion = null;
+	Shard shard = null;
+	
+	HttpClient client = HttpClient.newHttpClient();
+	
+	private HttpClient httpClient;
+	
+	private Gateway gateway = null;
+	
+	ClientInstance() {}
 	
 	public String getToken() {
 		
@@ -43,4 +51,5 @@ public class AccountInstance extends Object {
 		return this.shard;
 		
 	}
+	
 }

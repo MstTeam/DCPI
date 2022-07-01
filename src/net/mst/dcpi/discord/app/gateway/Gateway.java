@@ -1,4 +1,4 @@
-package net.mst.gateway;
+package net.mst.dcpi.discord.app.gateway;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,30 +15,34 @@ import java.util.TimerTask;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
-import net.mst.dcpi.discord.app.AccountInstance;
+import net.mst.dcpi.discord.app.ClientInstance;
+import net.mst.dcpi.discord.app.ClientManager;
+import net.mst.dcpi.discord.app.gateway.enums.GatewayApiVersion;
+import net.mst.dcpi.discord.app.gateway.enums.Status;
 import net.mst.json.JsonObject;
 import net.mst.json.Parser;
 import net.mst.requests.Request;
 import net.mst.requests.RequestManager;
-import net.mst.dcpi.Object;
-import net.mst.gateway.enums.GatewayApiVersion;
-import net.mst.gateway.enums.Status;
 
-public class Gateway extends Object {
+public class Gateway {
 	
-	protected AccountInstance AccountInstance;
-	protected WebSocket websocket;
+	ClientInstance ClientInstance;
+	WebSocket websocket;
 	
-	protected GatewayApiVersion GatewayApiVersion;
+	GatewayApiVersion GatewayApiVersion;
 	
-	protected final HttpClient webClient = HttpClient.newHttpClient();
+	final HttpClient webClient = HttpClient.newHttpClient();
 	
-	protected RequestManager reqManager = new RequestManager().setActionsPerTime(120, 60*1000);
+	RequestManager reqManager = new RequestManager().setActionsPerTime(120, 60*1000);
+	HttpClient client;
 	
-	public Gateway(AccountInstance AccountInstance) {
+	
+	public Gateway(ClientInstance ClientInstance) {
 		
 		this.GatewayApiVersion = RequestManager.gatewayApiVersion;
-		this.AccountInstance = AccountInstance;
+		this.ClientInstance = ClientInstance;
+		
+		this.client = ClientManager.getHttpClient(ClientInstance);
 		
 		try {
 			connect();
@@ -48,10 +52,10 @@ public class Gateway extends Object {
 		
 	}
 	
-	public Gateway(AccountInstance AccountInstance, GatewayApiVersion GatewayApiVersion) {
+	public Gateway(ClientInstance ClientInstance, GatewayApiVersion GatewayApiVersion) {
 		
 		this.GatewayApiVersion = GatewayApiVersion;
-		this.AccountInstance = AccountInstance;
+		this.ClientInstance = ClientInstance;
 		
 		try {
 			connect();
@@ -63,11 +67,11 @@ public class Gateway extends Object {
 	
 	public String connect() throws InterruptedException, ExecutionException, URISyntaxException {
 		
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://discord.com/api/v" + this.AccountInstance.getApiVersion().getVersion() + "/gateway/bot")).header("Authorization", "Bot " + this.AccountInstance.getToken()).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://discord.com/api/v" + this.ClientInstance.getApiVersion().getVersion() + "/gateway/bot")).header("Authorization", "Bot " + this.ClientInstance.getToken()).build();
 		
 		try {
 			
-			HttpResponse<String> response = $getterClient.send(request, BodyHandlers.ofString());
+			HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 			
 			System.out.println(response.body());
 			
@@ -178,12 +182,12 @@ class GatewayManager implements Listener {
 			
 			hb = new Heartbeat(this);
 			
-			String s = new Parser().parse(this.gw.AccountInstance.getShard().receivePayloadObject(this.gw.AccountInstance.getToken()));
+			String s = new Parser().parse(this.gw.ClientInstance.getShard().receivePayloadObject(this.gw.ClientInstance.getToken()));
 			
 			System.out.println(s);
 			
 			// Identify Payload
-			sendCommand(new Parser().parse(this.gw.AccountInstance.getShard().receivePayloadObject(this.gw.AccountInstance.getToken())), false);
+			sendCommand(new Parser().parse(this.gw.ClientInstance.getShard().receivePayloadObject(this.gw.ClientInstance.getToken())), false);
 			
 		}
     	

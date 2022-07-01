@@ -8,9 +8,8 @@ import java.net.http.HttpResponse.BodyHandlers;
 
 import net.mst.json.JsonObject;
 import net.mst.json.Parser;
-import net.mst.json.Parser;
 
-public class Application extends AccountInstance {
+public class Application extends ClientInstance {
 	
 	public String getAuthorizationUrl(AuthorizationFlow AuthorizationFlow) {
 		
@@ -20,13 +19,13 @@ public class Application extends AccountInstance {
 	
 	protected void cache() {
 		
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://discord.com/api/v" + customApiVersion.getVersion() + "/oauth2/applications/@me")).header("Authorization", "Bot " + this.token).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://discord.com/api/v" + getApiVersion().getVersion() + "/oauth2/applications/@me")).header("Authorization", "Bot " + getToken()).build();
 			
 		try {
 			
 			long l = System.nanoTime();
 			
-			HttpResponse<String> response = $getterClient.send(request, BodyHandlers.ofString());
+			HttpResponse<String> response = ClientManager.getHttpClient(this).send(request, BodyHandlers.ofString());
 			
 			long l2 = System.nanoTime();
 			

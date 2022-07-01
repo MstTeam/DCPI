@@ -1,4 +1,4 @@
-package net.mst.gateway.enums;
+package net.mst.dcpi.discord.app.gateway.enums;
 import java.util.List;
 
 public enum GatewayIntent {
