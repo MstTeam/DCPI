@@ -44,6 +44,22 @@ public enum ApiVersion {
 		
 	}
 	
+	public static ApiVersion getDefault() {
+		
+		for(ApiVersion s : ApiVersion.values()) {
+			
+			if(s.isDefault()) {
+				
+				return s;
+				
+			}
+			
+		}
+		
+		return ApiVersion.values()[0];
+		
+	}
+	
 	public ApiVersion ofID(int ID) {
 		
 		for(ApiVersion s : ApiVersion.values()) {

@@ -6,6 +6,7 @@ import net.mst.dcpi.discord.app.enums.ApiVersion;
 import net.mst.dcpi.discord.app.gateway.enums.GatewayApiVersion;
 import net.mst.utilities.timer.Task;
 import net.mst.utilities.timer.Timer;
+import net.mst.utilities.timer.TimerUnit;
 
 public class RequestManager {
 	
@@ -54,7 +55,7 @@ public class RequestManager {
 				
 				if(!requests.isEmpty()) {
 					
-					if(executeRequest(requests.getLast())) {
+					if(executeRequest(requests.getLast()) != null) {
 						
 						requests.removeLast();
 						
@@ -70,18 +71,17 @@ public class RequestManager {
 		
 	}
 	
-	private boolean executeRequest(Request Request) {
+	@SuppressWarnings("unchecked")
+	private <T extends Object> Response<T> executeRequest(Request<? extends Object> Request) {
 		
 		if(actionsDone < actionsPerTime) {
 			
 			addActionsRate(1);
-			Request.perform();
-			
-			return true;
+			return (Response<T>) Request.perform();
 			
 		}
 		
-		return false;
+		return null;
 		
 	}
 	
@@ -97,7 +97,7 @@ public class RequestManager {
 		
 	}
 	
-	public RequestManager queueRequest(Request Request) {
+	public RequestManager queueRequest(Request<?> Request) {
 		
 		requests.addRequest(Request);
 		
@@ -105,13 +105,24 @@ public class RequestManager {
 		
 	}
 	
-	public RequestManager instantRequest(Request Request) {
+	public <T extends Object> Response<T> instantRequest(Request<T> Request) {
 		
-		if(!executeRequest(Request)) {
+		Response<T> object = executeRequest(Request);
+		
+		if(object == null) {
 			
 			requests.addRequest(Request);
 			
+			
 		}
+		
+		return object;
+		
+	}
+	
+	public RequestManager setActionsPerTime(Integer Actions, long Time, TimerUnit TimerUnit) {
+		
+		setActionsPerTime(Actions, TimerUnit.getMilliseconds(Time));
 		
 		return this;
 		

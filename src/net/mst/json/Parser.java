@@ -182,7 +182,7 @@ public class Parser {
 						
 						currentPos = i - 1;
 						
-						return false;
+						return Boolean.FALSE;
 						
 					}
 					
@@ -190,7 +190,7 @@ public class Parser {
 						
 						currentPos = i - 1;
 						
-						return true;
+						return Boolean.TRUE;
 						
 					}
 					

@@ -1,11 +1,19 @@
 package net.mst.requests;
 
-public abstract class Request {
+public abstract class Request<T extends Object> {
+	
+	// private boolean executed = false;
 	
 	public Request() {
 		
 	}
 	
-	public abstract void perform();
+	public Response<T> perform() {
+		
+		return new Response<T>(setAction());
+		
+	}
+	
+	public abstract T setAction();
 
 }

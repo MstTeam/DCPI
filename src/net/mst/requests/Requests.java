@@ -5,19 +5,19 @@ import java.util.Map;
 
 public class Requests {
 	
-	private Map<Integer, Request> list = new HashMap<Integer, Request>();
+	private Map<Integer, Request<?>> list = new HashMap<Integer, Request<?>>();
 	
 	public Requests() {
 		
 	}
 	
-	public Request getLast() {
+	public Request<?> getLast() {
 		
 		return list.get(list.size());
 		
 	}
 	
-	public Request getFirst() {
+	public Request<?> getFirst() {
 		
 		if(list.isEmpty()) {
 			
@@ -37,7 +37,7 @@ public class Requests {
 		
 	}
 	
-	public Requests addRequest(Request Request) {
+	public Requests addRequest(Request<?> Request) {
 		
 		list.put(list.size() + 1, Request);
 		return this;

@@ -1,24 +1,18 @@
 package net.mst.dcpi.discord.app.gateway;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.WebSocket.Listener;
 import java.nio.ByteBuffer;
 import java.net.http.WebSocket;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
-import net.mst.dcpi.discord.app.ClientInstance;
-import net.mst.dcpi.discord.app.ClientManager;
 import net.mst.dcpi.discord.app.gateway.enums.GatewayApiVersion;
 import net.mst.dcpi.discord.app.gateway.enums.Status;
+import net.mst.dcpi.discord.entities.ClientInstance;
 import net.mst.json.JsonObject;
 import net.mst.json.Parser;
 import net.mst.requests.Request;
@@ -34,15 +28,12 @@ public class Gateway {
 	final HttpClient webClient = HttpClient.newHttpClient();
 	
 	RequestManager reqManager = new RequestManager().setActionsPerTime(120, 60*1000);
-	HttpClient client;
 	
 	
 	public Gateway(ClientInstance ClientInstance) {
 		
 		this.GatewayApiVersion = RequestManager.gatewayApiVersion;
 		this.ClientInstance = ClientInstance;
-		
-		this.client = ClientManager.getHttpClient(ClientInstance);
 		
 		try {
 			connect();
@@ -65,43 +56,29 @@ public class Gateway {
 		
 	}
 	
-	public String connect() throws InterruptedException, ExecutionException, URISyntaxException {
+	public void connect() throws InterruptedException, ExecutionException, URISyntaxException {
 		
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://discord.com/api/v" + this.ClientInstance.getApiVersion().getVersion() + "/gateway/bot")).header("Authorization", "Bot " + this.ClientInstance.getToken()).build();
+		HttpResponse<String> response = ClientInstance.sendGetRequest("/gateway/bot");
 		
-		try {
+		System.out.println(response.body());
+		
+		JsonObject jo = new Parser().parse(response.body());
+		
+		if(jo.contains("session_start_limit")) {
 			
-			HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+			JsonObject subjo = jo.getObject("session_start_limit");
 			
-			System.out.println(response.body());
-			
-			JsonObject jo = new Parser().parse(response.body());
-			
-			if(jo.contains("session_start_limit")) {
+			if(subjo.contains("remaining")) {
 				
-				JsonObject subjo = jo.getObject("session_start_limit");
-				
-				if(subjo.contains("remaining")) {
+				if(subjo.getInteger("remaining") > 0) {
 					
-					if(subjo.getInteger("remaining") > 0) {
-						
-						websocket =  webClient.newWebSocketBuilder().buildAsync(new URI("wss://gateway.discord.gg/?v=" + this.GatewayApiVersion.getVersion() + "&encoding=json"), new GatewayManager(this)).get();
-						
-					}
+					websocket =  webClient.newWebSocketBuilder().buildAsync(new URI("wss://gateway.discord.gg/?v=" + this.GatewayApiVersion.getVersion() + "&encoding=json"), new GatewayManager(this)).get();
 					
 				}
 				
 			}
 			
-			return null;
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
-		
-		return null;
 		
 	}
 
@@ -116,9 +93,6 @@ class GatewayManager implements Listener {
     protected int heartbeat_interval = 0;
     protected Heartbeat hb;
     
-    protected int ratelimit = 0;
-    protected Timer ratelimiter = new Timer();
-    
     // Ping
     
     protected long ping_start = 0;
@@ -132,17 +106,6 @@ class GatewayManager implements Listener {
     	
     	this.gw = Gateway;
     	this.websocket = gw.websocket;
-    	
-    	ratelimiter.scheduleAtFixedRate(new TimerTask() {
-
-			@Override
-			public void run() {
-				
-				ratelimit = 0;
-				
-			}
-    		
-    	}, 60*1000, 60*1000);
     	
     }
     
@@ -277,25 +240,25 @@ class GatewayManager implements Listener {
 		
 		if(instant) {
 			
-			this.gw.reqManager.instantRequest(new Request() {
+			this.gw.reqManager.instantRequest(new Request<Object>() {
 
 				@Override
-				public void perform() {
-					
+				public Object setAction() {
 					sendWebsocketText(command);
-					
+					return null;
 				}
 				
 			});
 			
 		}else {
 			
-			this.gw.reqManager.queueRequest(new Request() {
+			this.gw.reqManager.queueRequest(new Request<Object>() {
 
 				@Override
-				public void perform() {
+				public Object setAction() {
 					
 					sendWebsocketText(command);
+					return null;
 					
 				}
 				

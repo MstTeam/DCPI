@@ -3,6 +3,8 @@ package net.mst.dcpi.discord.app;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.mst.dcpi.discord.entities.Application;
+
 public class ApplicationManager {
 	
 	private static Map<String, Application> applications = new HashMap<>();
