@@ -19,7 +19,7 @@ public class JsonObject {
 		
 	}
 	
-	public void addValue(String Key, Object Value) {
+	public JsonObject addValue(String Key, Object Value) {
 		
 		if(!data.containsKey(Key)) {
 			
@@ -27,15 +27,19 @@ public class JsonObject {
 			
 		}
 		
+		return this;
+		
 	}
 	
-	public void removeValue(String Key) {
+	public JsonObject removeValue(String Key) {
 		
 		if(data.containsKey(Key)) {
 			
 			data.remove(Key);
 			
 		}
+		
+		return this;
 		
 	}
 	

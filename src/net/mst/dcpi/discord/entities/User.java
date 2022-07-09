@@ -2,16 +2,24 @@ package net.mst.dcpi.discord.entities;
 
 import java.awt.Color;
 import java.net.http.HttpResponse;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mst.dcpi.discord.entities.enums.AvatarDecorationSize;
-import net.mst.dcpi.discord.entities.enums.AvatarSize;
-import net.mst.dcpi.discord.entities.enums.BannerSize;
-import net.mst.dcpi.discord.entities.enums.Locale;
-import net.mst.dcpi.discord.entities.enums.UserFlag;
+import net.mst.dcpi.discord.entities.channel.PrivateChannel;
+import net.mst.dcpi.discord.entities.enums.user.AvatarDecorationSize;
+import net.mst.dcpi.discord.entities.enums.user.AvatarSize;
+import net.mst.dcpi.discord.entities.enums.user.BannerSize;
+import net.mst.dcpi.discord.entities.enums.user.Locale;
+import net.mst.dcpi.discord.entities.enums.user.UserFlag;
 import net.mst.json.JsonObject;
 import net.mst.json.Parser;
+import net.mst.requests.Request;
+import net.mst.requests.RequestAction;
 
 public class User {
 	
@@ -342,6 +350,42 @@ public class User {
 	public Locale getLocale() {
 		
 		return Locale.ofValue(get("locale"));
+		
+	}
+	
+	public Instant getTimeCreated() {
+		
+		return Instant.ofEpochMilli((Long.valueOf(get("id")) >> 22) + 1420070400000L);
+		
+	}
+	
+	public LocalDateTime getTimeCreated(ZoneId ZoneId) {
+		
+		return Instant.ofEpochMilli((Long.valueOf(get("id")) >> 22) + 1420070400000L).atZone(ZoneId).toLocalDateTime();
+		
+	}
+	
+	// Post
+	
+	public <T> RequestAction<PrivateChannel> createPrivateChannel() {
+		
+		JsonObject params = new JsonObject().addValue("recipient_id", this.id);
+		
+		Request<PrivateChannel> response = new Request<PrivateChannel>() {
+
+			@Override
+			public PrivateChannel setAction() {
+				HttpResponse<String> httpResponse = client.sendPostRequest("/users/@me/channels", params).get();
+				
+				System.out.println(httpResponse.body());
+				JsonObject object = new Parser().parse(httpResponse.body());
+				
+				return new PrivateChannel(object);
+			}
+			
+		};
+		
+		return new RequestAction<PrivateChannel>(client.manager, response);
 		
 	}
 

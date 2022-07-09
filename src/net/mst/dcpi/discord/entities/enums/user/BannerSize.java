@@ -1,4 +1,4 @@
-package net.mst.dcpi.discord.entities.enums;
+package net.mst.dcpi.discord.entities.enums.user;
 
 public enum BannerSize {
 

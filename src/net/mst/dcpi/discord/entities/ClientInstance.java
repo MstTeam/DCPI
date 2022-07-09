@@ -4,13 +4,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import net.mst.dcpi.discord.app.enums.ApiVersion;
 import net.mst.dcpi.discord.app.gateway.Gateway;
 import net.mst.dcpi.discord.app.gateway.Shard;
+import net.mst.json.JsonObject;
+import net.mst.json.Parser;
 import net.mst.requests.Request;
+import net.mst.requests.RequestAction;
 import net.mst.requests.RequestManager;
 import net.mst.requests.Response;
 import net.mst.utilities.timer.TimerUnit;
@@ -82,18 +89,37 @@ public class ClientInstance {
 		
 		return manager.instantRequest(requestt).getReturned();
 		
-		//HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://discord.com/api/v" + getApiVersion().getVersion() + Path)).header("Authorization", "Bot " + getToken()).build();
+	}
+	
+	public <T> Supplier<HttpResponse<String>> sendPostRequest(String Path, JsonObject JsonObject) {
 		
-		/*try {
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://discord.com/api/v" + getApiVersion().getVersion() + Path)).header("Authorization", "Bot " + getToken()).POST(BodyPublishers.ofString(new Parser().parse(JsonObject))).header("Content-Type", "application/json").build();
+		
+		Supplier<HttpResponse<String>> supplier = () -> {try {
+			return client.send(request, BodyHandlers.ofString());
+		} catch (IOException | InterruptedException e) {
+			return null;
+		}};
+		
+		return supplier;
+		
+		/*Request<HttpResponse<String>> response = new Request<HttpResponse<String>>() {
+
+			@Override
+			public HttpResponse<String> setAction() {
+				
+				try {
+					return client.send(request, BodyHandlers.ofString());
+				} catch (IOException | InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return null;
+			}
 			
-			HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-			
-			System.out.println(response.body());
-			
-			return response;
-			
-		} catch (IOException | InterruptedException e) {}
-		*/
+		};
+		
+		return new RequestAction<HttpResponse<String>>(manager, response);*/
 		
 	}
 	
