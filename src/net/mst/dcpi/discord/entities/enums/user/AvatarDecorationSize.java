@@ -1,6 +1,6 @@
 package net.mst.dcpi.discord.entities.enums.user;
 
-public enum AvatarDecorationSize {
+public enum AvatarDecorationSize implements ImageSize {
 
 	SMALL (96),
 	LARGE (160);

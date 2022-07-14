@@ -7,19 +7,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import net.mst.dcpi.discord.Cache;
+import net.mst.dcpi.discord.EntityData;
 import net.mst.dcpi.discord.app.enums.ApiVersion;
 import net.mst.dcpi.discord.app.gateway.Gateway;
 import net.mst.dcpi.discord.app.gateway.Shard;
 import net.mst.json.JsonObject;
 import net.mst.json.Parser;
 import net.mst.requests.Request;
-import net.mst.requests.RequestAction;
 import net.mst.requests.RequestManager;
-import net.mst.requests.Response;
 import net.mst.utilities.timer.TimerUnit;
 
 public class ClientInstance {
@@ -34,6 +32,10 @@ public class ClientInstance {
 	RequestManager manager = new RequestManager().setActionsPerTime(50, 1, TimerUnit.SECONDS);
 	
 	private Gateway gateway = null;
+	
+	// Cache
+	
+	Cache<EntityData> channelCache = new Cache<EntityData>(this); 
 	
 	ClientInstance() {}
 	

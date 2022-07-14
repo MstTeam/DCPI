@@ -1,6 +1,6 @@
 package net.mst.dcpi.discord.entities.enums.user;
 
-public enum BannerSize {
+public enum BannerSize implements ImageSize {
 
 	SMALL (300),
 	LARGE (600);

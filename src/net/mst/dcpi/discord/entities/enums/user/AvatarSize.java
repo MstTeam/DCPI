@@ -1,6 +1,6 @@
 package net.mst.dcpi.discord.entities.enums.user;
 
-public enum AvatarSize {
+public enum AvatarSize implements ImageSize {
 
 	MINI (16),
 	TINY (32),

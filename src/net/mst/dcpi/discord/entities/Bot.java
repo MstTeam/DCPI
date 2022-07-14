@@ -3,7 +3,6 @@ package net.mst.dcpi.discord.entities;
 import net.mst.dcpi.discord.app.ApplicationManager;
 import net.mst.dcpi.discord.app.enums.ApiVersion;
 import net.mst.dcpi.discord.app.gateway.Shard;
-import net.mst.dcpi.discord.entities.channel.Channel;
 import net.mst.json.JsonObject;
 import net.mst.json.Parser;
 
@@ -78,19 +77,13 @@ public class Bot extends Application {
 		
 		System.out.println(jo.hash());
 		
-		return new User(jo);
+		return new User(jo, this);
 		
 	}
 	
 	public User getUserOfId(String ID) {
 		
 		return new User(ID, this);
-		
-	}
-	
-	public Channel getChannelById(String ID) {
-		
-		return new Channel(ID, this);
 		
 	}
 

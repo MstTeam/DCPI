@@ -10,7 +10,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mst.dcpi.discord.entities.channel.PrivateChannel;
+import net.mst.dcpi.discord.EntityData;
 import net.mst.dcpi.discord.entities.enums.user.AvatarDecorationSize;
 import net.mst.dcpi.discord.entities.enums.user.AvatarSize;
 import net.mst.dcpi.discord.entities.enums.user.BannerSize;
@@ -24,7 +24,7 @@ import net.mst.requests.RequestAction;
 public class User {
 	
 	String id = "0";
-	JsonObject data;
+	EntityData data;
 	
 	ClientInstance client;
 	
@@ -32,16 +32,18 @@ public class User {
 		
 		this.id = ID;
 		this.client = ClientInstance;
+		this.data = new EntityData(null, ClientInstance, ID);
 		
 	}
 	
-	User(JsonObject Data) {
+	User(JsonObject Object, ClientInstance ClientInstance) {
 		
-		this.data = Data;
-		this.id = data.getString("id");
+		this.client = ClientInstance;
+		this.id = Object.getString("id");
+		
 		
 	}
-	
+	 
 	public String getId() {
 		
 		return this.id;
@@ -52,7 +54,7 @@ public class User {
 		
 		HttpResponse<String> response = client.sendGetRequest("/users/" + this.id);
 		
-		data = new Parser().parse(response.body());
+		data.updateJson(new Parser().parse(response.body()));
 		
 		System.out.println(response.body());
 		
@@ -64,36 +66,17 @@ public class User {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	private <T extends Object> T get(String Key) {
-		
-		if(data == null) {
-			
-			cache();
-			
-		}
-		
-		if(data.contains(Key)) {
-				
-			return (T) (data.get(Key));
-					
-		}
-		
-		return null;
-		
-	}
-	
 	// Methods
 	
 	public String getName() {
 		
-		return get("username");
+		return data.get("username");
 		
 	}
 	
 	public String getAvatarUrl() {
 		
-		String avatarHash = get("avatar");
+		String avatarHash = data.get("avatar");
 		
 		if(avatarHash != null) {
 			
@@ -115,7 +98,7 @@ public class User {
 	
 	public String getAvatarUrl(AvatarSize ImageSize) {
 		
-		String avatarHash = get("avatar");
+		String avatarHash = data.get("avatar");
 		
 		if(avatarHash != null) {
 			
@@ -149,7 +132,7 @@ public class User {
 	
 	public String getBannerUrl() {
 		
-		String bannerHash = get("banner");
+		String bannerHash = data.get("banner");
 		
 		if(bannerHash != null) {
 			
@@ -171,7 +154,7 @@ public class User {
 	
 	public String getBannerUrl(BannerSize BannerSize) {
 		
-		String bannerHash = get("banner");
+		String bannerHash = data.get("banner");
 		
 		if(bannerHash != null) {
 			
@@ -193,7 +176,7 @@ public class User {
 	
 	public String getAvatarDecoration() {
 		
-		String decorationHash = get("avatar_decoration");
+		String decorationHash = data.get("avatar_decoration");
 		
 		if(decorationHash != null) {
 				
@@ -207,7 +190,7 @@ public class User {
 	
 	public String getAvatarDecoration(AvatarDecorationSize AvatarDecorationSize) {
 		
-		String decorationHash = get("avatar_decoration");
+		String decorationHash = data.get("avatar_decoration");
 		
 		if(decorationHash != null) {
 				
@@ -221,15 +204,15 @@ public class User {
 	
 	public Color getBannerColor() {
 		
-		if(get("banner_color") != null) {
+		if(data.get("banner_color") != null) {
 			
-			return Color.decode((get("banner_color")));
+			return Color.decode((data.get("banner_color")));
 			
 		}
 		
-		if(get("accent_color") != null) {
+		if(data.get("accent_color") != null) {
 			
-			return Color.decode("#" + Integer.toHexString(get("accent_color")));
+			return Color.decode("#" + Integer.toHexString(data.get("accent_color")));
 			
 		}
 		
@@ -245,7 +228,7 @@ public class User {
 	
 	public Integer getDiscriminator() {
 		
-		return Integer.valueOf(get("discriminator"));
+		return Integer.valueOf(data.get("discriminator"));
 		
 	}
 	
@@ -259,13 +242,13 @@ public class User {
 		
 		List<UserFlag> tlist = new ArrayList<UserFlag>();
 		
-		if(get("public_flags") == null) {
+		if(data.get("public_flags") == null) {
 			
 			return tlist;
 			
 		}
 		
-		String t = Long.toBinaryString((Integer) get("public_flags"));
+		String t = Long.toBinaryString((Integer) data.get("public_flags"));
 		
 		for(int i = 0; i < t.length(); i++) {
 			
@@ -287,13 +270,13 @@ public class User {
 		
 		List<UserFlag> tlist = new ArrayList<UserFlag>();
 		
-		if(get("flags") == null) {
+		if(data.get("flags") == null) {
 			
 			return tlist;
 			
 		}
 		
-		String t = Long.toBinaryString((Integer) get("flags"));
+		String t = Long.toBinaryString((Integer) data.get("flags"));
 		
 		for(int i = 0; i < t.length(); i++) {
 			
@@ -313,55 +296,55 @@ public class User {
 	
 	public Boolean isBot() {
 			
-		return get("bot");
+		return data.get("bot");
 		
 	}
 	
 	public Boolean hasVerifiedEmail() {
 		
-		return get("verified");
+		return data.get("verified");
 		
 	}
 	
 	public Boolean has2FA() {
 		
-		return get("mfa_enabled");
+		return data.get("mfa_enabled");
 		
 	}
 	
 	public String getEmail() {
 		
-		return get("email");
+		return data.get("email");
 		
 	}
 	
 	public String getPronouns() {
 		
-		return get("pronouns");
+		return data.get("pronouns");
 		
 	}
 	
 	public String getBiography() {
 		
-		return get("bio");
+		return data.get("bio");
 		
 	}
 	
 	public Locale getLocale() {
 		
-		return Locale.ofValue(get("locale"));
+		return Locale.ofValue(data.get("locale"));
 		
 	}
 	
 	public Instant getTimeCreated() {
 		
-		return Instant.ofEpochMilli((Long.valueOf(get("id")) >> 22) + 1420070400000L);
+		return Instant.ofEpochMilli((Long.valueOf(data.get("id")) >> 22) + 1420070400000L);
 		
 	}
 	
 	public LocalDateTime getTimeCreated(ZoneId ZoneId) {
 		
-		return Instant.ofEpochMilli((Long.valueOf(get("id")) >> 22) + 1420070400000L).atZone(ZoneId).toLocalDateTime();
+		return Instant.ofEpochMilli((Long.valueOf(data.get("id")) >> 22) + 1420070400000L).atZone(ZoneId).toLocalDateTime();
 		
 	}
 	
@@ -380,7 +363,7 @@ public class User {
 				System.out.println(httpResponse.body());
 				JsonObject object = new Parser().parse(httpResponse.body());
 				
-				return new PrivateChannel(object);
+				return new PrivateChannel(client.channelCache.handle(id, object));
 			}
 			
 		};

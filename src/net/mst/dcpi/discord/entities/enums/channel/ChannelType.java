@@ -1,7 +1,9 @@
 package net.mst.dcpi.discord.entities.enums.channel;
 
 public enum ChannelType {
-	
+
+	//TextChannel: 1, 3, 0, 5, 10, 11, 12
+	//
 	PRIVATE (1),
 	GROUP (3),
 	
