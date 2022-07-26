@@ -1,8 +1,10 @@
 package net.mst.dcpi.discord;
 
+import java.net.http.HttpResponse;
+
 import net.mst.dcpi.discord.entities.ClientInstance;
 import net.mst.json.JsonObject;
-import net.mst.requests.EntityResponse;
+import net.mst.json.Parser;
 
 public class EntityData {
 	
@@ -11,11 +13,30 @@ public class EntityData {
 	
 	private String id;
 	
+	private Object[] parameters;
+	private RouteType routeType;
+	
 	public EntityData(JsonObject JsonObject, ClientInstance ClientInstance, String ID) {
 		
 		this.jsonObject = JsonObject;
 		this.clientInstance = ClientInstance;
 		this.id = ID;
+		
+	}
+	
+	public EntityData setRoute(RouteType RouteType, Object... Parameters) {
+		
+		this.parameters = Parameters;
+		this.routeType = RouteType;
+		
+		if(Parameters.length < 1) {
+			
+			this.parameters = new Object[1];
+			this.parameters[0] = (Object) id;
+			
+		}
+		
+		return this;
 		
 	}
 	
@@ -44,7 +65,7 @@ public class EntityData {
 		
 		if(jsonObject == null) {
 			
-			return (T) EntityResponse.CACHE;
+			this.jsonObject = cache();
 			
 		}
 		
@@ -55,6 +76,14 @@ public class EntityData {
 		}
 		
 		return null;
+		
+	}
+	
+	public JsonObject cache() {
+		
+		HttpResponse<String> response = clientInstance.sendGetRequest(routeType.getRoute(parameters));
+		System.out.println(response.body());
+		return new Parser().parse(response.body());
 		
 	}
 

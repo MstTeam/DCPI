@@ -17,5 +17,17 @@ public interface MessageChannel extends Channel {
 		return getData().get("last_message_id");
 		
 	}
+	
+	default Message getLastMessage() {
+		
+		return new Message(getData().get("last_message_id"), getId(), getClientInstance());
+		
+	}
+	
+	default Message getMessageById(String Id) {
+		
+		return new Message(Id, getId(), getClientInstance());
+		
+	}
 
 }

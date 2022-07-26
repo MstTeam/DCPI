@@ -49,7 +49,7 @@ public class Cache<T extends EntityData> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public EntityData handle(String Id, JsonObject Object) {
+	public EntityData handle(String Id, JsonObject Object, RouteType RouteType, Object... Parameters) {
 		
 		if(collection.containsKey(Id)) {
 			
@@ -58,7 +58,7 @@ public class Cache<T extends EntityData> {
 			
 		}
 		
-		EntityData data = new EntityData(Object, this.client, Id);
+		EntityData data = new EntityData(Object, this.client, Id).setRoute(RouteType, Parameters);
 		
 		collection.put(Id, (T) data);
 		return data;

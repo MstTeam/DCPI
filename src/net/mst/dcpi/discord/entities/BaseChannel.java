@@ -1,21 +1,20 @@
 package net.mst.dcpi.discord.entities;
 
 import net.mst.dcpi.discord.EntityData;
-import net.mst.json.JsonArray;
 
-public class PrivateChannel implements MessageChannel {
+public class BaseChannel implements Channel {
 	
 	private String id;
 	private ClientInstance client;
 
-	PrivateChannel(String Id, ClientInstance ClientInstance) {
+	BaseChannel(String Id, ClientInstance ClientInstance) {
 		
 		this.id = Id;
 		this.client = ClientInstance;
 		
 	}
 	
-	PrivateChannel(EntityData EntityData) {
+	BaseChannel(EntityData EntityData) {
 		
 		this.id = EntityData.getId();
 		this.client = EntityData.getClientInstance();
@@ -35,22 +34,6 @@ public class PrivateChannel implements MessageChannel {
 	private EntityData getData() {
 		
 		return getClientInstance().channelCache.getEntityById(getId());
-		
-	}
-	
-	// Methods
-	
-	public User getRecipient() {
-		
-		JsonArray array = getData().get("recipients");
-		
-		if(array != null) {
-			
-			return new User(array.getObjects().get(0), getClientInstance(), null);
-			
-		}
-		
-		return null;
 		
 	}
 

@@ -4,16 +4,15 @@ import java.awt.Color;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.mst.dcpi.discord.EntityData;
-import net.mst.dcpi.discord.entities.enums.user.AvatarDecorationSize;
-import net.mst.dcpi.discord.entities.enums.user.AvatarSize;
-import net.mst.dcpi.discord.entities.enums.user.BannerSize;
+import net.mst.dcpi.discord.ImageManager;
+import net.mst.dcpi.discord.RouteType;
+import net.mst.dcpi.discord.entities.enums.user.ImageSize;
+import net.mst.dcpi.discord.entities.enums.user.ImageType;
 import net.mst.dcpi.discord.entities.enums.user.Locale;
 import net.mst.dcpi.discord.entities.enums.user.UserFlag;
 import net.mst.json.JsonObject;
@@ -32,15 +31,37 @@ public class User {
 		
 		this.id = ID;
 		this.client = ClientInstance;
-		this.data = new EntityData(null, ClientInstance, ID);
+		
+		createEntityData(null);
 		
 	}
 	
-	User(JsonObject Object, ClientInstance ClientInstance) {
+	User(JsonObject Object, ClientInstance ClientInstance, RouteType RouteType) {
 		
 		this.client = ClientInstance;
 		this.id = Object.getString("id");
 		
+		createEntityData(RouteType);
+		
+	}
+	
+	@SuppressWarnings("static-access")
+	private void createEntityData(RouteType RouteType) {
+		
+		if(RouteType != null) {
+			
+			switch(RouteType) {
+			
+			case GET_CURRENT_USER: this.data = new EntityData(null, client, id).setRoute(RouteType); break;
+			default: this.data = new EntityData(null, client, id).setRoute(RouteType); break;
+			
+			}
+			
+		}else {
+			
+			this.data = new EntityData(null, client, id).setRoute(RouteType.GET_USER);
+			
+		}
 		
 	}
 	 
@@ -50,19 +71,9 @@ public class User {
 		
 	}
 	
-	void cache() {
-		
-		HttpResponse<String> response = client.sendGetRequest("/users/" + this.id);
-		
-		data.updateJson(new Parser().parse(response.body()));
-		
-		System.out.println(response.body());
-		
-	}
-	
 	public void update() {
 		
-		cache();
+		data.cache();
 		
 	}
 	
@@ -80,15 +91,7 @@ public class User {
 		
 		if(avatarHash != null) {
 			
-			if(avatarHash.startsWith("a_")) {
-				
-				return String.format("https://cdn.discordapp.com/avatars/%s/%s.gif", this.id, avatarHash);
-				
-			}else {
-				
-				return String.format("https://cdn.discordapp.com/avatars/%s/%s.png", this.id, avatarHash);
-				
-			}
+			return ImageManager.receiveImageUrl(ImageType.USER_AVATAR, null, getId(), avatarHash);
 			
 		}
 		
@@ -96,21 +99,13 @@ public class User {
 		
 	}
 	
-	public String getAvatarUrl(AvatarSize ImageSize) {
+	public String getAvatarUrl(ImageSize ImageSize) {
 		
 		String avatarHash = data.get("avatar");
 		
 		if(avatarHash != null) {
 			
-			if(avatarHash.startsWith("a_")) {
-				
-				return String.format("https://cdn.discordapp.com/avatars/%s/%s.gif?size=%s", this.id, avatarHash, ImageSize.getSize());
-				
-			}else {
-				
-				return String.format("https://cdn.discordapp.com/avatars/%s/%s.png?size=%s", this.id, avatarHash, ImageSize.getSize());
-				
-			}
+			return ImageManager.receiveImageUrl(ImageType.USER_AVATAR, ImageSize, getId(), avatarHash);
 			
 		}
 		
@@ -120,13 +115,13 @@ public class User {
 	
 	public String getDefaultAvatarUrl() {
 		
-		return String.format("https://cdn.discordapp.com/embed/avatars/%s.png", getDiscriminator() % 5);
+		return ImageManager.receiveImageUrl(ImageType.DEFAULT_USER_AVATAR, null, getDiscriminator() % 5);
 		
 	}
 	
-	public String getDefaultAvatarUrl(AvatarSize ImageSize) {
+	public String getDefaultAvatarUrl(ImageSize ImageSize) {
 		
-		return String.format("https://cdn.discordapp.com/embed/avatars/%s.png?size=%s", getDiscriminator() % 5, ImageSize.getSize());
+		return ImageManager.receiveImageUrl(ImageType.DEFAULT_USER_AVATAR, ImageSize, getDiscriminator() % 5);
 		
 	}
 	
@@ -136,15 +131,7 @@ public class User {
 		
 		if(bannerHash != null) {
 			
-			if(bannerHash.startsWith("a_")) {
-				
-				return String.format("https://cdn.discordapp.com/banners/%s/%s.gif", this.id, bannerHash);
-				
-			}else {
-				
-				return String.format("https://cdn.discordapp.com/banners/%s/%s.png", this.id, bannerHash);
-				
-			}
+			return ImageManager.receiveImageUrl(ImageType.USER_AVATAR, null, getId(), bannerHash);
 			
 		}
 		
@@ -152,21 +139,13 @@ public class User {
 		
 	}
 	
-	public String getBannerUrl(BannerSize BannerSize) {
+	public String getBannerUrl(ImageSize ImageSize) {
 		
 		String bannerHash = data.get("banner");
 		
 		if(bannerHash != null) {
 			
-			if(bannerHash.startsWith("a_")) {
-				
-				return String.format("https://cdn.discordapp.com/banners/%s/%s.gif?size=%s", this.id, bannerHash, BannerSize.getSize());
-				
-			}else {
-				
-				return String.format("https://cdn.discordapp.com/banners/%s/%s.png?size=%s", this.id, bannerHash, BannerSize.getSize());
-				
-			}
+			return ImageManager.receiveImageUrl(ImageType.USER_BANNER, ImageSize, getId(), bannerHash);
 			
 		}
 		
@@ -180,7 +159,7 @@ public class User {
 		
 		if(decorationHash != null) {
 				
-			return String.format("https://cdn.discordapp.com/avatar-decorations/%s/%s.png", this.id, decorationHash);
+			return ImageManager.receiveImageUrl(ImageType.AVATAR_DECORATIONS, null, getId(), decorationHash);
 			
 		}
 		
@@ -188,13 +167,13 @@ public class User {
 		
 	}
 	
-	public String getAvatarDecoration(AvatarDecorationSize AvatarDecorationSize) {
+	public String getAvatarDecoration(ImageSize ImageSize) {
 		
 		String decorationHash = data.get("avatar_decoration");
 		
 		if(decorationHash != null) {
 				
-			return String.format("https://cdn.discordapp.com/avatar-decorations/%s/%s.png?size=%s", this.id, decorationHash, AvatarDecorationSize.getSize());
+			return ImageManager.receiveImageUrl(ImageType.AVATAR_DECORATIONS, ImageSize, getId(), decorationHash);
 			
 		}
 		
@@ -363,7 +342,7 @@ public class User {
 				System.out.println(httpResponse.body());
 				JsonObject object = new Parser().parse(httpResponse.body());
 				
-				return new PrivateChannel(client.channelCache.handle(id, object));
+				return new PrivateChannel(client.channelCache.handle(object.getString("id"), object, RouteType.GET_CHANNEL));
 			}
 			
 		};
